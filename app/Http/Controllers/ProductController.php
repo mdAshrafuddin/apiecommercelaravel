@@ -50,7 +50,7 @@ class ProductController extends Controller
 
         return response([
             'data' => new ProductResource($product)
-        ],201);
+        ],Response::HTTP_CREATED);
     }
 
     /**
@@ -84,9 +84,11 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Product $product)
     {
-        //
+        // $request['detail'] = $request->detail;
+        // unset($request['detail']);
+        $product->update($request->all());
     }
 
     /**
