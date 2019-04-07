@@ -3,16 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
+use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductCollection;
 use App\Product;
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function __construct()
+    {
+        $this->middleware('auth:api')->except('index','show');
+    }
+  
     public function index()
     {
         return ProductCollection::collection(Product::paginate(20));
@@ -29,14 +31,26 @@ class ProductController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
+        $product = new Product;
+
+        $product->name = $request->name;
+        $product->detail	 = $request->detail;
+        $product->stock = $request->stock;
+        $product->price = $request->price;
+        $product->dicount = $request->dicount;
+
+        $product->save();
+
+        return response([
+            'data' => new ProductResource($product)
+        ],201);
     }
 
     /**
