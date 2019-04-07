@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Response;
 use App\Http\Requests\ProductRequest;
+use App\Exceptions\ProductNotBelogsToUser;
+use Auth;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductCollection;
 use App\Product;
@@ -41,6 +43,7 @@ class ProductController extends Controller
     {
         $product = new Product;
 
+        
         $product->name = $request->name;
         $product->detail	 = $request->detail;
         $product->stock = $request->stock;
@@ -87,6 +90,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        $this->ProductUserCheck($product);
         // $request['detail'] = $request->detail;
         // unset($request['detail']);
         $product->update($request->all());
@@ -102,5 +106,12 @@ class ProductController extends Controller
     {
         $product->delete();
         return response(null,Response::HTTP_NO_CONTENT);
+    }
+
+    public function ProductUserCheck($product)
+    {
+        if(Auth::id() !== $product->user_id){
+            throw new ProductNotBelogsToUser;
+        }
     }
 }
