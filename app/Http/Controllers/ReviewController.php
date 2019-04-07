@@ -33,9 +33,14 @@ class ReviewController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request,Product $product)
     {
-        //
+        $review = new Review($request->all());
+        $product->reviews()->save($review);
+
+        return response([
+            'data' => new ReviewResource($review)
+        ],201);
     }
 
     /**
